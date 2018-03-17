@@ -16,8 +16,11 @@ export default {
         //左侧个人信息栏出现
         changeOpen: function () {
             // console.log(this.$parent.show);
-            this.$parent.componentsChange.leftpanelshow = true
             
+            this.$parent.componentsChange.leftpanelshow = true
+            let body = document.getElementsByTagName('body')[0]
+            body.style.overflow = 'hidden'
+            console.log('左侧出现')
             // this.$emit('taggle',false);
         }
     }

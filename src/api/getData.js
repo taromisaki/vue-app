@@ -18,3 +18,6 @@ export const userpoint = data => axio('/user/follows', data,'GET')
 export const musicurl = data => axio('/music/url', data,'GET')
 //获取音乐详情
 export const musicdetail = data => axio('/song/detail', data,'GET')
+//获取音乐歌词
+export const lyric = data => axio('/lyric', data,'GET')
+

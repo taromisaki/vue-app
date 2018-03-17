@@ -2,7 +2,7 @@
     <div id="leftpanel">
         <div class="mask">
             <div class="userInfo">
-                <img class="userHead" v-bind:src="userinfo.profile.avatarUrl"></img>
+                <img class="userHead" v-bind:src="userinfo.profile.avatarUrl">
                 <div class="userDetil">
                     <span class="userName" @click="cons">{{userinfo.profile.nickname}}</span>
                     <b class="userlevel">lv{{userinfo.level}}</b>
@@ -36,6 +36,7 @@
     </div>
 </template>
 <script>
+import {loginrefresh} from '@/api/getData'
 export default {
     data() {
         return {
@@ -48,15 +49,29 @@ export default {
             console.log(123)
             this.$parent.componentsChange.leftpanelshow = false;
             // this.$emit('taggle',false);
+            let body = document.getElementsByTagName('body')[0]
+            body.style.overflow = 'scroll'
         },
         cons: function () {
             console.log(this.userinfo)
-        }
+        },
+        //获取用户信息
+        async getUserinfo(id) {
+            let par = {'uid':id}
+            let refreshreq = await loginrefresh(par)
+            this.userinfo = refreshreq.data
+            console.log(this.userinfo)
+        } 
     },
     created: function () {
-        let user = this.$store.state.userinfo
-        this.userinfo = user
-        console.log(this.userinfo)
+        // let user = this.$store.state.userinfo  localStorage.getItem('userid') ||
+        
+    },
+    mounted: function () {
+        //let id = this.$store.state.userId
+        let id = localStorage.getItem('userid')
+        //alert(id)
+        this.getUserinfo(id)
     }
 }
 </script>
@@ -66,6 +81,9 @@ export default {
         height: 100%;
         position: absolute;
         top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
         min-height: 812px;
         color: #fff;
         z-index: 1000;

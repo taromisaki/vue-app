@@ -8,93 +8,6 @@ Vue.use(Vuex)
 //     musicname: ''
 // }
 //用于保存用户登录信息
-let userinfo = {
-    "profile": {
-        "avatarImgIdStr": "",
-        "backgroundImgIdStr": "",
-        "description": "",
-        "userId": "",
-        "vipType": "",
-        "nickname": "",
-        "accountStatus": "",
-        "province": "",
-        "defaultAvatar": "",
-        "avatarUrl": "",
-        "gender": "",
-        "birthday": "",
-        "city": "",
-        "mutual": "",
-        "remarkName": "",
-        "expertTags": "",
-        "experts": {},
-        "avatarImgId": "",
-        "backgroundImgId": "",
-        "userType": "",
-        "authStatus": "",
-        "backgroundUrl": "",
-        "detailDescription": "",
-        "djStatus": "",
-        "followed": "",
-        "signature": "",
-        "authority": "",
-        "avatarImgId_str": "",
-        "followeds": "",
-        "follows": "",
-        "blacklist": "",
-        "eventCount": "",
-        "playlistCount": "",
-        "playlistBeSubscribedCount": ""
-    },
-    "level": "",
-    "listenSongs": "",
-    "peopleCanSeeMyPlayRecord": "",
-    "bindings": [
-        {
-            "expired": "",
-            "expiresIn": "",
-            "refreshTime": "",
-            "url": "",
-            "userId": "",
-            "tokenJsonStr": "",
-            "id": "",
-            "type": ""
-        },
-        {
-            "expired": "",
-            "expiresIn": "",
-            "refreshTime": "",
-            "url": "",
-            "userId": "",
-            "tokenJsonStr": "",
-            "id": "",
-            "type": ""
-        },
-        {
-            "expired": "",
-            "expiresIn": "",
-            "refreshTime": "",
-            "url": "",
-            "userId": "",
-            "tokenJsonStr": "",
-            "id": "",
-            "type": ""
-        },
-        {
-            "expired": "",
-            "expiresIn": "",
-            "refreshTime": "",
-            "url": "",
-            "userId": "",
-            "tokenJsonStr": "",
-            "id": "",
-            "type": ""
-        }
-    ],
-    "adValid": "",
-    "code": "",
-    "createTime": "",
-    "createDays": ""
-}
 let musicinfo = {
     "name": "",
     "id": "",
@@ -169,12 +82,13 @@ export default new Vuex.Store({
         // },
         //正在播放的音乐的详细信息
         musicplaying: {
+            id:'',
             url:'',
             name:'',
             musicinfo
         },
-        //处于登录状态的用户信息
-        userinfo,
+        //用户id
+        userId: '',
         //控制音乐播放进度条开始工作
         borgo: false
     },
@@ -184,12 +98,13 @@ export default new Vuex.Store({
           state.musiclistId = id
         },
         changemusic (state,data) {
+            state.musicplaying.id = data.id
             state.musicplaying.url = data.url
             state.musicplaying.name = data.name
             state.musicplaying.musicinfo = data.musicinfo
         },
-        setuserinfo(state,data){
-            state.userinfo = data
+        setuserId(state,data){
+            state.userId = data
         },
         setborgo (state,isgo) {
             state.borgo = isgo

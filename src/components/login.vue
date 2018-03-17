@@ -45,11 +45,10 @@ export default {
                     alert('登陆成功')
                     console.log(req.data)
                     let id = req.data.account.id
-                    let par = {'uid':id}
-                    let refreshreq = await loginrefresh(par)
-                    console.log(refreshreq.data)
-                    _self.$store.commit('setuserinfo',refreshreq.data)
-                    window.location.href="http://172.18.41.213:3001/#/main"
+                    //_self.$store.commit('setuserId', id)
+                    localStorage.setItem('userid', id)
+                    _self.$router.push({path: '/main'});
+                    // window.location.href="/#/main"
                 }
             }catch(err){
                 alert(err)  //123.150.43.34:30001/api/user/login

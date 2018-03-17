@@ -2,7 +2,7 @@
   <div class="hello">
     <comheader ></comheader>
       <transition name="bounce">
-        <LeftPanel v-if="componentsChange.leftpanelshow"></LeftPanel>
+        <LeftPanel v-show="componentsChange.leftpanelshow"></LeftPanel>
       </transition>
 
       <div v-if="fullscren" keep-alive>
@@ -53,12 +53,6 @@ export default {
     comfooter
   },
   methods: {
-    login: function () {
-      let req = new XMLHttpRequest()
-      req.open('GET','http://localhost:3000/music/url?id=336655')
-      req.setRequestHeader('Content-Type','application/x-www-form-urlencoded')
-      req.send()
-    }
   }
 }
 </script>

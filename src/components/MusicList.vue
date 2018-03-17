@@ -14,6 +14,7 @@
             <div class="clf"></div>
         </div>
         <div class="built-drop">
+            <div class="waiting" id="waiting"></div>
             <ul class="list">
                 <li v-for="item in musiclists" @click = "getMusiclistDetail" v-bind:list-id="item.id">
                     <img v-bind:src="item.coverImgUrl" alt="">
@@ -55,16 +56,27 @@ export default {
             let pram = {'uid':'515731832'}
             let par = await getmusiclist(pram)
             console.log(par)
-            let data = par.data
-            console.log(data)
-            let len = data.playlist.length
-            let names = []
-            for(let i = 0;i<len;i++) {
-                names.push(data.playlist[i])
-            }
-            console.log(_self.musiclists)
-            _self.musiclists = names
-            return _self.musiclists
+            if (par.data.code == 200) {
+                let data = par.data
+                console.log(data)
+                let len = data.playlist.length
+                let names = []
+                for(let i = 0;i<len;i++) {
+                    names.push(
+                        {
+                            'id':data.playlist[i].id,
+                            'name':data.playlist[i].name,
+                            'coverImgUrl':data.playlist[i].coverImgUrl,
+                            'creator':data.playlist[i].creator.nickname,
+                            'trackCount':data.playlist[i].trackCount
+                        }
+                    )
+                }
+                console.log(_self.musiclists)
+                _self.musiclists = names
+                document.getElementById('waiting').style.display = 'none'
+                return _self.musiclists 
+            }  
         }
     },
     created: function (){
@@ -82,9 +94,7 @@ export default {
         width: 100%;
         margin: 60px 0;
         padding: 0;
-        background: url("../assets/musiclist/listbg.png") no-repeat;
-        background-size: 100% auto;
-        background-attachment:fixed;
+        
         .toolList {
             width: 100%;
             height: 176px;
@@ -132,7 +142,16 @@ export default {
             }
         } 
         .built-drop {
+            position: relative;
             width: 100%;
+            .waiting {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: red;
+            }
             .list {
                 width: 100%;
                 padding-top: 5px;
@@ -147,7 +166,7 @@ export default {
                     overflow: hidden;
                     img {
                         width: 50px;
-                        height: 50px;
+                        // height: 50px;
                         float: left;
                         flex:0;
                     }

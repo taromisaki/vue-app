@@ -86,7 +86,7 @@ export default {
             let getmusic = await musicdetail(parm)
             console.log(getmusic)
             let musicinfo = getmusic.data.songs[0]
-            this.$store.commit('changemusic', {'url':url,'name':musicname,'musicinfo':musicinfo})
+            this.$store.commit('changemusic', {'id':id,'url':url,'name':musicname,'musicinfo':musicinfo})
             //音乐播放，进度条开始动，通过vuex传值
             this.$store.commit('setborgo', true)
         },
@@ -116,9 +116,6 @@ export default {
         margin-top: 60px;
         width: 100%;
         height: 100%;
-        background: url("../assets/musiclist/listbg.png") no-repeat;
-        background-size: 100% auto;
-        background-attachment:fixed;
         .listheader {
             width: 100%;
             height: 60px;
@@ -267,7 +264,7 @@ export default {
                 }
             }
             .musics-list {
-                // list-style: none;
+                list-style: none;
                 margin: 0;
                 padding: 0;
                 padding-bottom: 20px;
