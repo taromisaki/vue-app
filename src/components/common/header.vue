@@ -1,12 +1,7 @@
 <template>
   <div id="header">
           <div class="menu" @click="changeOpen"></div>
-          <div class="middle">
-              <div class="local"></div>
-              <div class="cloud"></div>
-              <div class="group"></div>
-          </div>
-          <div class="search"></div>
+          <div class="search" @click="searchShow"></div>
           <div class="clf"></div>
   </div>
 </template>
@@ -22,6 +17,9 @@ export default {
             body.style.overflow = 'hidden'
             console.log('左侧出现')
             // this.$emit('taggle',false);
+        },
+        searchShow: function (){
+            this.$parent.componentsChange.searchWrapshow = true
         }
     }
 }
@@ -35,58 +33,22 @@ export default {
         right: 0;
         width: 100%;
         height: 60px;
-        background: rgba(0, 37, 177, 0.77);
+        background: rgba(94, 225, 213, 0.22);
         .menu {
-            width: 30%;
+            width: 60px;
             height: 60px;
             background: url('../../assets/header/menu.png') no-repeat;
             background-size: auto 50%;
             background-position: 15%;
             float: left;
         }
-        .middle {
-            width: 40%;
-            height: 60px;
-            display: flex;
-            float: left;
-            .local {
-                flex:1;
-                -ms-flex:1;
-                -webkit-flex:1;
-                -webkit-box-flex:1;
-                height: 60px;
-                background: url('../../assets/header/localmusic.png') no-repeat;
-                background-size: auto 50%;
-                background-position: center;
-            }
-            .cloud {
-                flex:1;
-                -ms-flex:1;
-                -webkit-flex:1;
-                -webkit-box-flex:1;
-                height: 60px;
-                background: url('../../assets/header/cloudmusic.png') no-repeat;
-                background-size: auto 50%;
-                background-position: center;
-            }
-            .group {
-                flex:1;
-                -ms-flex:1;
-                -webkit-flex:1;
-                -webkit-box-flex:1;
-                height: 60px;
-                background: url('../../assets/header/group.png') no-repeat;
-                background-size: auto 50%;
-                background-position: center;
-            }
-        }
         .search {
-            width: 30%;
+            width: 60px;
             height: 60px;
             background: url('../../assets/header/search.png') no-repeat;
             background-size: auto 50%;
-            background-position: 85%;
-            float: left;
+            background-position: center;
+            float: right;
         }
         .clf {
             clear: both;

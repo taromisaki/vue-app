@@ -1,10 +1,10 @@
 <template>
-  <div id="footer" :class="fullshow? 'maxheight':'minheight'" @click="allscren()">
+  <div id="footer" :class="fullshow? 'maxheight':'minheight'">
       <!-- 全屏播放界面 -->
       <!-- <transition name="fade"> -->
         <!-- <music-body v-if="fullshow"></music-body> -->
-        <div style="height:calc(100% - 60px);" v-if="fullshow" class="playingbody">
-            <div class="top" @click="allscren()">回退</div>
+        <div style="height:calc(100% - 60px);" class="playingbody" :class="fullshow? 'maxheight-body':'minheight-body'">
+            <div class="top" @click="allscren()">返回</div>
             <!-- 中间体，播放界面或歌词界面 -->
             <div class="body" style="height:calc(100% - 150px);">
                <img v-bind:src="music.pic" alt="" class="Rotation">
@@ -47,7 +47,7 @@
             <img src="../../assets/footer/default.png" alt="">
             <div class="music-name">未在播放。。。</div>
           </div>
-          <div class="left" v-else>
+          <div class="left" v-else @click="allscren()">
             <img v-bind:src="music.pic" alt="">
             <div class="music-name">{{music.name}}</div>
           </div>
@@ -68,6 +68,18 @@
     transition:  all 0.5s;
     height: 60px;
 }
+.maxheight-body {
+    transition:  all 0.5s;
+    //height: calc(100% - 60px);
+    top: 0;
+    overflow: hidden;
+    opacity: 1;
+}
+.minheight-body {
+    transition:  all 0.5s;
+    top: 100%;
+    opacity: 0;
+}
 //播放栏是否因为播放列表变样式
 .listshow {
     transition:  all 0.5s;
@@ -86,9 +98,12 @@
     background: rgba(66, 207, 177, 1);
     bottom: 0;
     .playingbody {
+            position: relative;
+            overflow: hidden;
         .top {
             height: 60px;
             width: 100%;
+            line-height: 60px;
         }
         .body {
             width: 100%;
@@ -113,12 +128,22 @@
                 -webkit-animation: rotation 10s linear infinite;
                 -o-animation: rotation 10s linear infinite;
             }
+            .irc {
+                width: 100%;
+                height: 200px;
+                overflow: hidden;
+                text-align: center;
+                p {
+                    line-height: 16px;
+                    font-size: 12px;
+                }
+            }
         }
         .bottom {
             position: absolute;
             height: 30px;
             width: 200px;
-            bottom: 90px;
+            bottom: 30px;
             left: 50%;
             right: 0;
             margin-left: -100px;
@@ -151,6 +176,7 @@
         padding: 0;
         padding-top: 70%;
         overflow: hidden;
+        z-index: 1000;
         ul {
             background: rgb(27, 193, 199);
             overflow: scroll;
@@ -418,6 +444,10 @@ export default {
             let parm = {'ids':id}
             let getmusic = await musicdetail(parm)
             console.log(getmusic)
+            let playingback = document.getElementsByClassName('body')[0]
+            playingback.style.background = 'url('+getmusic.data.songs[0].al.picUrl+')'
+            playingback.style.backgroundSize = 'auto 100%'
+            playingback.style.backgroundPosition = 'center'
 			let musicinfo = getmusic.data.songs[0]
             _self.$store.commit('changemusic', {'id':id,'url':url,'name':musicname,'musicinfo':musicinfo})
             
@@ -438,40 +468,11 @@ export default {
                     })
                 }
             });
-            
             //音乐播放，进度条开始动
             _self.isborgo = true
             let lyrict = await lyric(pram)
-            // let exp =  new RegExp("/\[\d{2}:\d{2}:\d{2}\]/g")
-            // let exp =  new RegExp("/\[\d{2}:\d{2}:\d{2}\]/g")
-            let lyrics = lyrict.data.lrc.lyric.split('\n')
-            console.log(lyrics);
-            var lrcObj = {};
-            for(var i=0;i<lyrics.length;i++){
-                var lyrica = decodeURIComponent(lyrics[i]);
-                var timeReg = /\[\d*:\d*((\.|\:)\d*)*\]/g;
-                var timeRegExpArr = lyrica.match(timeReg);
-                if(!timeRegExpArr)continue;
-                var clause = lyrica.replace(timeReg,'');
-                for(var k = 0,h = timeRegExpArr.length;k < h;k++) {
-                    var t = timeRegExpArr[k];
-                    var min = Number(String(t.match(/\[\d*/i)).slice(1)),
-                        sec = Number(String(t.match(/\:\d*/i)).slice(1));
-                    var time = min * 60 + sec;
-                    lrcObj[time] = clause;
-                }
-            }
-            console.log(lrcObj)
-            let irccon = document.getElementById('irc')
-            // lines.replace(exp,function(){
-            //     let min = arguments[1] | 0, //分
-            //     sec = arguments[2] | 0, //秒
-            //     realMin = min * 60 + sec; //计算总秒数
-
-            //     lrcTimeArray.push(realMin);
-            // })
-            // lines.replace(/[dd:dd.dd]/g,"")
-            // console.log(lyrics)
+            let lyrics = lyrict.data.lrc.lyric
+            this.formatLyric(lyrics)
             console.log('动了')
         },
         //从store获取音乐列表id并展开
@@ -567,6 +568,54 @@ export default {
                     })
                 }
             });
+        },
+        //歌词时间转换
+        formatLyricTime: function(str) {
+            var arr=str.split(":");
+            var second=0;
+            if (arr.length==3) {
+                second=-(-arr[0]*3600-arr[1]*60-arr[2]);
+            } else {
+                second=-(-arr[0]*60-arr[1]);
+            }
+            return second.toFixed(3);
+        },
+        //格式化歌词
+        formatLyric: function(str) {
+            var arr=[],
+                brr=[],
+                crr=[],
+                data={};
+
+            // 将字符串按“\n” 分割成数组
+            arr=str.split("\n");
+            // 去除最后一个空格
+            arr.splice(-1,1);
+            // 存入crr数组中
+            for (var i=0;i<arr.length;i++) {
+                // 将字符串按“]” 分割成数组
+                brr=arr[i].split("]");
+                // 匹配歌词时间，排除歌词附加信息 eg: "by:Treckiefans"
+                // /^(\d+:){1,2}\d+\.?\d+$/g  match 00:02 || 00:00:03 || 00:00:05.2
+                if (!!/^(\d+:){1,2}\d+\.?\d+$/g.test(brr[0].substring(1))) {
+                    data={
+                        "timepoint":this.formatLyricTime(brr[0].substring(1)),
+                        "lrcstr":brr[1] || ""
+                    };
+                    // 将所有键值对放入数组中
+                    crr.push(data);
+                } else {
+                    // 歌词贡献者信息，暂不处理 "by:Treckiefans"
+                }
+            }
+            console.log('处理后的',crr)
+            let irccon = document.getElementById('irc'),
+                template = '';
+            for (let p = 0; p < crr.length; p++) {
+                template += '<p style="font-size: 12px; line-height: 20px; width: 200px; margin: 0 auto" time-data="'+crr[p].timepoint+'">'+crr[p].lrcstr+'</p>'
+            }
+            console.log(template,irccon)
+            irccon.innerHTML = template
         }
     },
   watch: {

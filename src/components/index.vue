@@ -4,7 +4,7 @@
       <transition name="bounce">
         <LeftPanel v-show="componentsChange.leftpanelshow"></LeftPanel>
       </transition>
-
+      <search v-if="componentsChange.searchWrapshow"></search>
       <div v-if="fullscren" keep-alive>
         <transition name="fade">
         <musicList v-if="componentsChange.musiclistshow" keep-alive></musicList>
@@ -19,6 +19,7 @@
 
 <script>
 import LeftPanel from '@/components/LeftPanel'
+import search from '@/components/common/search'
 import musicList from '@/components/MusicList'
 import musiclistdetail from '@/components/musiclistdetail'
 import comheader from '@/components/common/header'
@@ -36,8 +37,9 @@ export default {
         //主页歌单隐藏
         musiclistshow: true,
         //歌单详情
-        musiclistdetailshow: false
-
+        musiclistdetailshow: false,
+        //搜索组件
+        searchWrapshow: false
       },
       //正在播放的音乐
       musicplaying:'',
@@ -47,6 +49,7 @@ export default {
   },
   components: {
     LeftPanel,
+    search,
     musicList,
     musiclistdetail,
     comheader,
