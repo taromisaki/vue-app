@@ -1,6 +1,6 @@
 <template>
   <div id="search-wrap">
-          <div class="goback" @click="saerchhide">返回</div>
+          <div class="goback" @click="searchhide">返回</div>
           <input class="search"></input>
           <div class="search-btn"></div>
           <div class="result-wrap">
@@ -12,7 +12,7 @@
 export default {
     methods: {
         //左侧个人信息栏出现
-        saerchhide: function () {
+        searchhide: function () {
             this.$parent.componentsChange.searchWrapshow = false
         }
     }
@@ -48,38 +48,3 @@ export default {
         }
     }
 </style>
-<script>
-export default {
-    data() {
-        return {
-        }
-    },
-    methods: {
-        //左侧个人信息栏隐藏
-        goback: function () {
-            this.$parent.componentsChange.searchWrap = false;
-        },
-        cons: function () {
-            console.log(this.userinfo)
-        },
-        //获取用户信息
-        async getUserinfo(id) {
-            let par = {'uid':id}
-            let refreshreq = await loginrefresh(par)
-            this.userinfo = refreshreq.data
-            console.log(this.userinfo)
-        } 
-    },
-    created: function () {
-        // let user = this.$store.state.userinfo  localStorage.getItem('userid') ||
-        
-    },
-    mounted: function () {
-        //let id = this.$store.state.userId
-        let id = localStorage.getItem('userid')
-        //alert(id)
-        this.getUserinfo(id)
-    }
-}
-</script>
-
