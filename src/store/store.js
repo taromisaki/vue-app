@@ -99,9 +99,6 @@ export default new Vuex.Store({
         },
         changemusic (state,data) {
             state.musicplaying.id = data.id
-            state.musicplaying.url = data.url
-            state.musicplaying.name = data.name
-            state.musicplaying.musicinfo = data.musicinfo
         },
         setuserId(state,data){
             state.userId = data

@@ -9,7 +9,12 @@
             <div class="body" style="height:calc(100% - 150px);">
                <img v-bind:src="music.pic" alt="" class="Rotation">
                <div class="irc" id="irc">
-
+                   <div class="irc-wrap" id="irc-wrap">
+                       
+                   </div>
+                    <!-- <ul>
+                        <li class="lrcps" v-for="node in playing_time_arr" v-bind:timepoint="node.lrcstr">{{node.lrcstr}}</li>
+                    </ul> -->
                </div>
             </div>
             <div class="bottom">
@@ -26,7 +31,7 @@
       <transition name="fadea">
         <div class="playinglist" v-if="listshow" @click.stop="listhide()">
           <ul>
-            <li v-for="item in musiclistDetail.tracks" v-bind:music-id="item.id" @click.stop="play">{{item.name}}</li>
+            <li v-for="item in musiclistDetail.tracks" v-bind:music-id="item.id" @click.stop="play(item.id)">{{item.name}}</li>
           </ul>
         </div>
       </transition>
@@ -47,7 +52,7 @@
             <img src="../../assets/footer/default.png" alt="">
             <div class="music-name">未在播放。。。</div>
           </div>
-          <div class="left" v-else @click="allscren()">
+          <div class="left" v-else @click="allscren(e)">
             <img v-bind:src="music.pic" alt="">
             <div class="music-name">{{music.name}}</div>
           </div>
@@ -131,11 +136,24 @@
             .irc {
                 width: 100%;
                 height: 200px;
-                overflow: hidden;
+                overflow: scroll;
                 text-align: center;
+                position: relative;
+                .irc-wrap {
+                }
                 p {
-                    line-height: 16px;
-                    font-size: 12px;
+                    // line-height: 16px;
+                    // font-size: 12px;
+                    //position: absolute;
+                    //top: 0;
+                    font-size: 8px; 
+                    line-height: 20px;
+                    width: 200px; 
+                    margin: 0 auto;
+                    color: #666;
+                }
+                .active {
+                    color: #fff;
                 }
             }
         }
@@ -371,8 +389,6 @@ export default {
           musiclistsId: [],
           //存储音乐列表具体信息
           musiclistDetail:{},
-          //进度条是否工作
-          isborgo: false,
           //以下是进度条测试data
           bardata : {
             pos: {},
@@ -384,16 +400,20 @@ export default {
             dragWidth: 0 //进度条宽度
           },
           timeDuration: null,
-          timeNow: null
+          timeNow: null,
+          //正在播放的歌曲的歌词，包括每句歌词出现的时间
+          playing_time_arr: [],
+          //歌词模板
+          lrctemp: ''
       }
   },
   components: {
-      'music-body': Child
+      'music-body': Child,
+      'lrc-temp': this.lrctemp
   },
   methods: {
       //暂停
       musicpause() {
-          console.log(11)
           this.playorpause = true
           let dom = document.getElementById('audio')
           dom.pause()
@@ -409,10 +429,7 @@ export default {
           console.log(111)
           this.fullshow = !this.fullshow
           this.listshow = false
-          let that = this
-        //   setTimeout(function(){
-        //       that.$parent.fullscren = !that.$parent.fullscren
-        //   },500)   
+          let that = this 
       },
       //获取音乐列表信息
       async getData(id){
@@ -426,14 +443,13 @@ export default {
             let itemsId = _self.musiclistsId
       },
         //获取具体音乐信息并播放
-        async play() {
+        async play(musicid) {
             let _self = this
-            _self.isborgo = true
             let audio = document.getElementById("audio")
             audio.src = ''
             let dom = event.currentTarget
             let musicname = dom.innerText
-            let id = dom.getAttribute("music-id")
+            let id =musicid
             // let name = dom.innerHTML
             console.log(musicname,id)
             let pram = {'id':id}
@@ -444,36 +460,64 @@ export default {
             let parm = {'ids':id}
             let getmusic = await musicdetail(parm)
             console.log(getmusic)
+            _self.music.name = getmusic.data.songs[0].name
+            _self.music.pic = getmusic.data.songs[0].al.picUrl
             let playingback = document.getElementsByClassName('body')[0]
             playingback.style.background = 'url('+getmusic.data.songs[0].al.picUrl+')'
             playingback.style.backgroundSize = 'auto 100%'
             playingback.style.backgroundPosition = 'center'
 			let musicinfo = getmusic.data.songs[0]
-            _self.$store.commit('changemusic', {'id':id,'url':url,'name':musicname,'musicinfo':musicinfo})
-            
+            //_self.$store.commit('changemusic', {'id':id,'url':url,'name':musicname,'musicinfo':musicinfo})
             let grogressbar = document.getElementById('progressbar')
             let bardrag = document.getElementById('bardrag')
             audio.src = url
+            let lyrict = await lyric(pram)
+            let lyrics = lyrict.data.lrc.lyric
+            this.formatLyric(lyrics)
+            //歌词p标签数组
+            let lrcps = $('.lrcps').toArray()
+            //let lrc_container = $('#irc ul')
+            $('.lrcps').css({marginTop: 0})
+            //存放歌词时间数据
+            let timeArr = this.playing_time_arr
             audio.addEventListener("canplaythrough", function(){
                 console.log('音乐准备完毕')
                 _self.isdefault = false
+                _self.playorpause = false
                 if (audio.readyState == 4) {
                     console.log('监听的url变化，赋值播放时间，监听时间变化')
+                    var temp = timeArr, index
                     audio.play()
                     audio.addEventListener("timeupdate", function (){
+                        let now = this.currentTime
+                        console.log(now)
                         _self.music.duration = audio.duration
                         _self.music.currentTime = audio.currentTime 
                         grogressbar.setAttribute('style', 'width:'+audio.currentTime/audio.duration*200+'px')
                         bardrag.setAttribute('style', 'left:'+audio.currentTime/audio.duration*200+'px')
+                        for (let i = 0, l = temp.length; i < l; i++) {
+                            if (now/*当前播放的时间*/ >= temp[i].timepoint) {
+                                console.log(now,2222)
+                                //显示到页面
+                                //$(lrcps[i]).addClass('active')
+                                //lrc_container.animate({top: -(lrc_container.css('top')+$(lrcps[i-1]).height())+'px'},500)
+                                // //$(lrcps[i-1]).removeClass('active')
+                                // lrc_container.scrollTop(lrc_container.scrollTop() + $(lrcps[i-1]).height())
+                                // console.log(lrc_container.scrollTop())
+                                //index = timeArr.indexOf(temp[i])
+                                console.log(temp[i])
+                                //$(lrcps[index]).css({color: '#fff'})
+                               $(lrcps[index-1]).animate({marginTop: -$(lrcps[index-1]).height()+'px',color: '#666'},500)
+                                temp.splice(i,1)
+                                return 0;
+                            } else{
+                                console.log(now,3333,temp[i].timepoint)
+                                return 0;
+                            };
+                        };
                     })
                 }
             });
-            //音乐播放，进度条开始动
-            _self.isborgo = true
-            let lyrict = await lyric(pram)
-            let lyrics = lyrict.data.lrc.lyric
-            this.formatLyric(lyrics)
-            console.log('动了')
         },
         //从store获取音乐列表id并展开
         get() {
@@ -543,32 +587,6 @@ export default {
             grogressbar.setAttribute('style', 'width:'+ (x - leftSpace)+'px')
             bardrag.setAttribute('style', 'left:'+ (x - leftSpace) +'px')
         },
-        async publicplay(val) {
-            let _self = this
-            let id = val
-            let pram = {'id':id}
-            let par = await musicurl(pram)
-            let url = par.data.data[0].url
-            let audio = document.getElementById("audio")
-            audio.src = ''
-            let grogressbar = document.getElementById('progressbar')
-            let bardrag = document.getElementById('bardrag')
-            audio.src = url
-            audio.addEventListener("canplaythrough", function(){
-                console.log('音乐准备完毕')
-                _self.isdefault = false
-                if (audio.readyState == 4) {
-                    console.log('监听的url变化，赋值播放时间，监听时间变化')
-                    audio.play()
-                    audio.addEventListener("timeupdate", function (){
-                        _self.music.duration = audio.duration
-                        _self.music.currentTime = audio.currentTime 
-                        grogressbar.setAttribute('style', 'width:'+audio.currentTime/audio.duration*200+'px')
-                        bardrag.setAttribute('style', 'left:'+audio.currentTime/audio.duration*200+'px')
-                    })
-                }
-            });
-        },
         //歌词时间转换
         formatLyricTime: function(str) {
             var arr=str.split(":");
@@ -609,12 +627,12 @@ export default {
                 }
             }
             console.log('处理后的',crr)
-            let irccon = document.getElementById('irc'),
+            this.playing_time_arr = crr
+            let irccon = document.getElementById('irc-wrap'),
                 template = '';
             for (let p = 0; p < crr.length; p++) {
-                template += '<p style="font-size: 12px; line-height: 20px; width: 200px; margin: 0 auto" time-data="'+crr[p].timepoint+'">'+crr[p].lrcstr+'</p>'
+                template += '<p class="lrcps" style="font-size: 8px; line-height: 20px; width: 200px; margin: 0 auto; color: #666" time-data="'+crr[p].timepoint+'">'+crr[p].lrcstr+'</p>'
             }
-            console.log(template,irccon)
             irccon.innerHTML = template
         }
     },
@@ -624,45 +642,7 @@ export default {
             let _self = this
             let id = val
             console.log(val,'考222')
-            this.publicplay(id)
-        }
-      },
-      musicurl: {
-        handler:function(val){
-            this.isdefault = false
-            this.playorpause = false
-            console.log(val)
-			//this.music.url = val
-            //如果正在播放的音乐变化，就替换data里存的音乐总时长，这是个异步过程，待优化
-            let audio = document.getElementById("audio")
-            if (audio.onplay) {
-                console.log(audio.duration)
-                this.music.duration = audio.duration
-                this.music.currentTime = audio.currentTime
-            }
-        }
-      },
-      musicname: {
-          handler:function(val){
-            console.log(val)
-            this.music.name = val
-        }
-      },
-      musicpic: {
-          handler:function(val){
-            console.log(val)
-            this.music.pic = val
-        }
-      },
-      //监听进度条是否需要开始工作
-      borgoing: {
-          handler:function(val){
-            console.log(val)
-            this.isborgo = val
-            if (this.isborgo == true){
-                // setInterval(this.zouba,1000)
-                console.log('进度条可以开始动了')
-            }
+            this.play(id)
         }
       }
   },
@@ -675,19 +655,6 @@ export default {
       //获取store中的音乐信息
       musicid() {
           return this.$store.state.musicplaying.id
-      },
-      musicurl() {
-          return this.$store.state.musicplaying.url
-      },
-      musicname() {
-          return this.$store.state.musicplaying.name
-      },
-      musicpic() {
-          return this.$store.state.musicplaying.musicinfo.al.picUrl
-      },
-      //获取vuex里其他组件传过来的决定进度条是否工作的变量
-      borgoing () {
-          return this.$store.state.borgo
       }
   },
   mounted: function (){ 

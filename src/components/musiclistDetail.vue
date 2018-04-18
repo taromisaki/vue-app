@@ -71,24 +71,9 @@ export default {
             let itemsId = _self.musiclistsId
         },
         async play() {
-            let _self = this
             let dom = event.currentTarget
-            let musicname = dom.innerText
             let id = dom.getAttribute("music-id")
-            // let name = dom.innerHTML
-            console.log(musicname,id)
-            let pram = {'id':id}
-            let par = await musicurl(pram)
-            console.log(par)
-            let url = par.data.data[0].url
-            console.log(url)
-            let parm = {'ids':id}
-            let getmusic = await musicdetail(parm)
-            console.log(getmusic)
-            let musicinfo = getmusic.data.songs[0]
-            this.$store.commit('changemusic', {'id':id,'url':url,'name':musicname,'musicinfo':musicinfo})
-            //音乐播放，进度条开始动，通过vuex传值
-            this.$store.commit('setborgo', true)
+            this.$store.commit('changemusic', {'id':id})
         },
         goBacklist () {
             this.$parent.componentsChange.musiclistshow = !this.$parent.componentsChange.musiclistshow
