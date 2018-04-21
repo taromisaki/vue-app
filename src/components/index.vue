@@ -11,7 +11,9 @@
         <musiclistdetail v-if="componentsChange.musiclistdetailshow" keep-alive></musiclistdetail>
       </transition>
       </div>
-      <comfooter keep-alive></comfooter>
+      <detailplay keep-alive></detailplay>
+      <comfooter></comfooter>
+      <audio autoplay class="audio" id="audio" ref='player'></audio>
       <!-- <div class="mask" v-if="show"></div> -->
   </div>
     
@@ -24,6 +26,7 @@ import musicList from '@/components/MusicList'
 import musiclistdetail from '@/components/musiclistdetail'
 import comheader from '@/components/common/header'
 import comfooter from '@/components/common/footer'
+import detailplay from '@/components/common/detailPlay'
 export default {
   name: 'HelloWorld',
   data () {
@@ -53,7 +56,8 @@ export default {
     musicList,
     musiclistdetail,
     comheader,
-    comfooter
+    comfooter,
+    detailplay
   },
   methods: {
   }
