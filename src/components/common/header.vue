@@ -1,7 +1,7 @@
 <template>
   <div id="header">
-          <div class="menu" @click="changeOpen"></div>
-          <div class="search" @click="searchShow"></div>
+          <div class="menu" @touchstart="changeOpen"></div>
+          <div class="search" @touchstart="searchShow"></div>
           <div class="clf"></div>
   </div>
 </template>
@@ -33,7 +33,7 @@ export default {
         right: 0;
         width: 100%;
         height: 60px;
-        background: rgba(94, 225, 213, 0.22);
+        background: rgba(30, 99, 255, 0.6);
         .menu {
             width: 60px;
             height: 60px;

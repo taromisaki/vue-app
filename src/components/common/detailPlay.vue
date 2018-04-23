@@ -1,5 +1,5 @@
 <template>
-  <div id="detail-play" class="maxheight">
+  <div id="detail-play">
         <img v-bind:src="music.pic" alt="" class="bg-img">
       <!-- 全屏播放界面 -->
       <!-- <transition name="fade"> -->
@@ -32,7 +32,7 @@
       <transition name="fadea">
         <div class="playinglist" v-if="listshow" @click.stop="listhide()">
           <ul>
-            <li v-for="item in musiclistDetail.tracks" v-bind:music-id="item.id" @click.stop="play(item.id)">{{item.name}}</li>
+            <li v-for="item in musiclistDetail.tracks" v-bind:music-id="item.id" @click.stop="play(item.id)">{{item.album.name}}</li>
           </ul>
         </div>
       </transition>
@@ -62,10 +62,7 @@
 </template>
 <style lang="less" scoped>
 //播放栏是否全屏
-.maxheight {
-    transition:  all 0.5s;
-    height: 100%;
-}
+
 .minheight {
     transition:  all 0.5s;
     height: 60px;
@@ -94,8 +91,9 @@
 #detail-play {
     position: fixed;
     // height: 60px;
-    // height: 100%;
+    height: 100%;
     width: 100%;
+    display: none;
     // background: red;
     background: rgba(66, 207, 177, 1);
     bottom: 0;
@@ -225,9 +223,12 @@
             font-size: 12px;
             line-height: 30px;
             height:30px;
-            width: calc(100% - 5px);
+            max-width: 80%;
             margin-left: 5px;
             margin-top: 5px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
     }
     .tool-list {
@@ -443,9 +444,9 @@ export default {
             let pram = {'id':id}
             let par = await getmusiclistdetail(pram)
             let data = par.data
-            console.log(data)
-            _self.musiclistDetail = data.playlist
-            _self.musiclistsId = data.privileges
+            console.log('||||||||||||||||',par)
+            _self.musiclistDetail = data.result
+            _self.musiclistsId = data.id
             let itemsId = _self.musiclistsId
       },
         //获取具体音乐信息并播放

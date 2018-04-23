@@ -32,8 +32,8 @@
             <ol class="musics-list" type="1">
                 <li v-for="item in musiclistDetail.tracks" v-bind:music-id="item.id" @click="play">
                     <div class="music-title">
-                        <p alt="">{{item.name}} <span v-if="item.alia[0]">({{item.alia[0]}})</span></p>
-                        <span class="singer">{{item.ar[0].name}} -- {{item.al.name}}</span>
+                        <p alt="">{{item.name}}</p>
+                        <span class="singer">{{item.album.artists[0].name}}</span>
                     </div>
                     <div class="music-tool"></div>
                     <span class="clf"></span>
@@ -65,8 +65,8 @@ export default {
             let pram = {'id':id}
             let par = await getmusiclistdetail(pram)
             let data = par.data
-            console.log(data)
-            _self.musiclistDetail = data.playlist
+            console.log(">>>>>",data)
+            _self.musiclistDetail = data.result
             _self.musiclistsId = data.privileges
             let itemsId = _self.musiclistsId
         },

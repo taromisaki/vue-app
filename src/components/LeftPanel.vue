@@ -1,6 +1,6 @@
 <template>
     <div id="leftpanel">
-        <div class="mask">
+        <div class="mask" @touchstart.stop="ll()" @touchmove.stop="ls()" @touchend.stop="lefthide()">
             <div class="userInfo">
                 <img class="userHead" v-bind:src="userinfo.profile.avatarUrl">
                 <div class="userDetil">
@@ -32,7 +32,7 @@
                 </ul>
             </div>
         </div> 
-        <div class="rightmask" @click="change"></div> 
+        <div class="rightmask" @touchstart="change"></div> 
     </div>
 </template>
 <script>
@@ -61,7 +61,20 @@ export default {
             let refreshreq = await loginrefresh(par)
             this.userinfo = refreshreq.data
             console.log(this.userinfo)
-        } 
+        } ,
+        lefthide: function (e){
+            console.log(e)
+            // e.preventdefault()
+            // var x = e.changedTouches[0].clientX;
+            // if(x/$('.mask').width() > 0.3) {
+            //     this.$parent.componentsChange.leftpanelshow = false;
+            //     // this.$emit('taggle',false);
+            //     let body = document.getElementsByTagName('body')[0]
+            //     body.style.overflow = 'scroll'
+            // }
+        },
+        ll:function () {},
+        ls:function () {}
     },
     created: function () {
         // let user = this.$store.state.userinfo  localStorage.getItem('userid') ||
@@ -79,7 +92,7 @@ export default {
     #leftpanel {
         width: 100%;
         height: 100%;
-        position: absolute;
+        position: fixed;
         top: 0;
         left: 0;
         right: 0;
