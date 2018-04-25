@@ -85,7 +85,20 @@ export default {
         let id = localStorage.getItem('userid')
         //alert(id)
         this.getUserinfo(id)
-    }
+    },
+    // watch: {
+    //     user_id: {
+    //         handler: function(val){
+    //             //alert(val)
+    //             this.getUserinfo(val)
+    //         }
+    //     }
+    // },
+    // computed: {
+    //     user_id () {
+    //         return localStorage.getItem('userid')
+    //     }
+    // }
 }
 </script>
 <style lang="less" scoped>

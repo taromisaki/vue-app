@@ -1,16 +1,16 @@
 <template>
     <div id="footer" @click="detailplay">
         <div class="tool-list">
-            <div class="left">
+            <div class="left" v-if="music">
                 <img src="../../assets/footer/default.png" alt="">
                 <div class="music-name">未在播放。。。</div>
             </div>
-            <div class="left">
+            <div class="left" v-else>
                 <img alt="">
                 <div class="music-name">666666</div>
             </div>
-            <div class="playtool"></div>
-            <div class="pausetool"></div>
+            <div class="playtool" v-if="playorpause"></div>
+            <div class="pausetool" v-else></div>
             <div class="menu"></div>
         </div>
     </div>
@@ -88,10 +88,12 @@ export default {
        return {
            isdefault: true,
            music: {
-               name: '',
-               pic: ''
+               id:'',
+               name:'',
+               musicinfo:{},
+               url:''
            },
-           playorpause: ''
+           playorpause: true
        }
    },
    methods: {
@@ -99,7 +101,21 @@ export default {
             $('#detail-play').show()
             $('#footer').hide()
        }
-   }
+   },
+    watch: {
+        store_music: {
+            handler: function(val){
+                alert(val)
+                this.music = val
+            }
+        }
+    },
+    computed: {
+      //获取store中的音乐信息
+      store_music() {
+          return this.$store.state.musicplaying
+      }
+  }
 }
 </script>
 

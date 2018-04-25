@@ -454,11 +454,8 @@ export default {
             let _self = this
             let audio = document.getElementById("audio")
             audio.src = ''
-            let dom = event.currentTarget
-            let musicname = dom.innerText
             let id =musicid
             // let name = dom.innerHTML
-            console.log(musicname,id)
             let pram = {'id':id}
             let par = await musicurl(pram)
             console.log(par)
@@ -467,16 +464,23 @@ export default {
             let parm = {'ids':id}
             let getmusic = await musicdetail(parm)
             console.log(getmusic)
+            let musicname = getmusic.data.songs[0].name
             _self.music.name = getmusic.data.songs[0].name
             _self.music.pic = getmusic.data.songs[0].al.picUrl
 			let musicinfo = getmusic.data.songs[0]
-            //_self.$store.commit('changemusic', {'id':id,'url':url,'name':musicname,'musicinfo':musicinfo})
+            _self.$store.commit('changemusic', {'id':id,'url':url,'name':musicname,'musicinfo':musicinfo})
             let grogressbar = document.getElementById('progressbar')
             let bardrag = document.getElementById('bardrag')
             audio.src = url
             let lyrict = await lyric(pram)
-            let lyrics = lyrict.data.lrc.lyric
-            this.formatLyric(lyrics)
+            let lyrics;
+            if (!lyrict.data.nolyric) {
+                lyrics = lyrict.data.lrc.lyric
+                this.formatLyric(lyrics)
+            }else {
+                console.log('未找到相关歌词')
+                //this.playing_time_arr = '未找到相关歌词'
+            }
             //歌词p标签数组
             let lrcps = $('.lrcps').toArray()
             //let lrc_container = $('#irc ul')

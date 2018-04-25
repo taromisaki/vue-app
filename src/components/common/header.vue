@@ -33,7 +33,7 @@ export default {
         right: 0;
         width: 100%;
         height: 60px;
-        background: rgba(30, 99, 255, 0.6);
+        background: rgba(74, 31, 11, 0.6);
         .menu {
             width: 60px;
             height: 60px;

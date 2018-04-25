@@ -21,6 +21,7 @@ body:before {
   left: 0;
   background: url("../src/assets/musiclist/listbg.png") no-repeat;
   background-size: 100% auto;
+  background: rgba(0, 0, 0, 0.9);
 }
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
