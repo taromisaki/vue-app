@@ -58,6 +58,7 @@
             <div class="next"></div>
             <div class="menu" @click.stop="get()"></div>
             </div>
+            <comment></comment>
     </div>
 </template>
 <style lang="less" scoped>
@@ -366,6 +367,7 @@
 
 </style>
 <script>
+import comment from '@/components/common/comment'
 import {getmusiclistdetail} from '@/api/getData'
 import {musicurl} from '@/api/getData'
 import {musicdetail} from '@/api/getData'
@@ -417,7 +419,8 @@ export default {
   },
   components: {
       'music-body': Child,
-      'lrc-temp': this.lrctemp
+      'lrc-temp': this.lrctemp,
+      'comment': comment
   },
   methods: {
       //暂停
