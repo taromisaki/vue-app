@@ -17,18 +17,8 @@
                 </div>
             </div>
             <div class="clf"></div>
-            <div class="tool">
-                <div class="stay">收藏</div>
-                <div class="comment">评论</div>
-                <div class="share">分享</div>
-                <div class="download">下载</div>
-            </div>
         </div>
         <div class="musics-con">
-            <div class="list-tool">
-                <div class="playall">播放全部</div>
-                <div class="select">多选</div>
-            </div>
             <ol class="musics-list" type="1">
                 <li v-for="item in musiclistDetail.tracks" v-bind:music-id="item.id" @click="play">
                     <div class="music-title">

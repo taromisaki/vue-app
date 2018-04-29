@@ -19,12 +19,10 @@
                </div>
             </div>
             <div class="bottom">
-                <!-- 播放模式 -->
-                <img class="playmode" src="../../assets/footer/sigle.png"></img>
                 <!-- 添加到我喜欢 -->
-                <img class="like" src="../../assets/footer/like.png"></img>
+                <i class="iconfont icon-icon-7"></i>
                 <!-- 歌曲评论列表 -->
-                <img class="comment" src="../../assets/footer/comment.png"></img>
+                <i class="iconfont icon-icon-24"></i>
             </div>
         </div>
       <!-- </transition> -->
@@ -40,24 +38,22 @@
         <!-- 进度条 -->
         <div class="bor">
             <div class="dragnum dragbox" ref="dragbox" id="dragbox">
-                <div class="progress" @click.stop="timeClick($event)" @touchstart.stop="touch($event)" @touchmove.stop="touchmove($event)" @touchend.stop="touchover($event)">
-                    <div class="progressbar" id="progressbar" style="transition: all .3s">
+                <div class="progress" @click.stop="timeClick($event)">
+                    <div class="progressbar" id="progressbar" v-bind:style="{transition: 'all .3s',width:this.music.currentTime/this.music.duration*200+'px'}">
                     </div>
                 </div>
-                <div class="bardrag" id="bardrag">
+                <div class="bardrag" id="bardrag" v-bind:style="{left:this.music.currentTime/this.music.duration*200+'px'}">
                 </div>
             </div>
         </div>
         <div class="tool-list">
-            <div class="playmode">
-                <span></span>
-                </div>
-            <div class="prev"></div>
-            <div class="playtool" @click.stop="musicplay()" v-if="playorpause"></div>
-            <div class="pausetool" @click.stop="musicpause()" v-else></div>
-            <div class="next"></div>
-            <div class="menu" @click.stop="get()"></div>
-            </div>
+            <div class="playmode iconfont icon-icon-20"></div>
+            <div class="prev iconfont icon-icon-17"></div>
+            <div class="playtool iconfont icon-icon-13" @click.stop="musicplay()" v-if="playorpause"></div>
+            <div class="pausetool iconfont icon-icon-18" @click.stop="musicpause()" v-else></div>
+            <div class="next iconfont icon-icon-15"></div>
+            <div class="menu iconfont icon-icon-1" @click.stop="get()"></div>
+        </div>
     </div>
 </template>
 <style lang="less" scoped>
@@ -92,11 +88,9 @@
     height: 60px;
 }
 #detail-play {
+    display: none;
     position: fixed;
-    // height: 60px;
-    // height: 100%;
     width: 100%;
-    // background: red;
     background: rgba(66, 207, 177, 1);
     bottom: 0;
     .bg-img {
@@ -111,8 +105,9 @@
                 filter: blur(20px); 
     }
     .playingbody {
-            position: relative;
-            overflow: hidden;
+        position: relative;
+        overflow: hidden;
+        background: rgba(0, 0, 0, 0.5);
         .top {
             height: 60px;
             width: 100%;
@@ -178,20 +173,14 @@
             right: 0;
             margin-left: -100px;
             box-sizing: border-box;
-            img {
-                float: left;
-                display: block;
+            display: flex;
+            i {
                 box-sizing: border-box;
-                width: 20px;
-                height: 20px;
-            }
-            .playmode {
-            }
-            .like {
-                margin-left: 70px;
-            }
-            .comment {
-                margin-left: 70px;
+                flex: 1;
+                text-align: center;
+                font-size: 20px;
+                line-height: 30px;
+                color: #fff;
             }
         }
     }
@@ -252,33 +241,12 @@
             }
 
         }
-        .prev {
-            background: url("../../assets/footer/play.png") no-repeat;
-            background-size: 24px 24px;
-            background-position: center;
-        }
-        .playtool {
-            background: url("../../assets/footer/play.png") no-repeat;
-            background-size: 24px 24px;
-            background-position: center;
-        }
-        .next {
-            background: url("../../assets/footer/play.png") no-repeat;
-            background-size: 24px 24px;
-            background-position: center;
-        }
-        .pausetool {
-            background: url("../../assets/footer/pause.png") no-repeat;
-            background-size: 24px 24px;
-            background-position: center;
-        }
-        .menu {
-            background: url("../../assets/footer/playinglist.png") no-repeat;
-            background-size: 24px 24px;
-            background-position: center;
-        }
         div {
             flex: 1;
+            font-size: 20px;
+            line-height: 60px;
+            text-align: center;
+            color: #fff;
         }
     }
     .bor {
@@ -475,15 +443,22 @@ export default {
             audio.src = url
             let lyrict = await lyric(pram)
             let lyrics = lyrict.data.lrc.lyric
-            this.formatLyric(lyrics)
+            if (lyrics) {
+                this.formatLyric(lyrics)
+            }
+            else {
+
+            }
             //歌词p标签数组
             let lrcps = $('.lrcps').toArray()
             //let lrc_container = $('#irc ul')
             $('.lrcps').css({marginTop: 0})
             //存放歌词时间数据
+            let father_wrap =  $('#irc')
             let wrap = $('#irc-wrap')
             let lrcArr = this.playing_lrc
             //let timeArr = this.playing_time_arr
+            //深拷贝
             let timeArr = Object.create(this.playing_time_arr)
             console.log(wrap,lrcps)
             audio.addEventListener("canplaythrough", function(){
@@ -498,24 +473,20 @@ export default {
                         let now = this.currentTime
                         _self.music.duration = audio.duration
                         _self.music.currentTime = audio.currentTime 
-                        grogressbar.setAttribute('style', 'width:'+audio.currentTime/audio.duration*200+'px')
-                        bardrag.setAttribute('style', 'left:'+audio.currentTime/audio.duration*200+'px')
                         for (let i = 0, l = temp.length; i < l; i++) {
                             if (now/*当前播放的时间*/ >= temp[i].timepoint) {
                                 index = lrcArr.indexOf(temp[i].lrcstr)
-                                console.log(index)
                                 $(lrcps[index]).css({color: '#fff'})
                                 if (index > 0) {
                                     $(lrcps[index-1]).css({color: '#666'})
                                 }
                                 if (index >= 5) {
                                     top += -$(lrcps[index-1]).height()
-                                    wrap.animate({top: top+'px'},500)
+                                    wrap.animate({offsetTop: top+'px'},500)
                                 }
                                 temp.splice(i,1)
                                 return 0;
                             } else{
-                                //console.log(now,3333,temp[i].timepoint)
                                 return 0;
                             };
                         };
@@ -537,59 +508,43 @@ export default {
         //进度条测试
         timeClick: function(e) { //点击拖动到指定位置
             console.log('点击')
-            let grogressbar = document.getElementById('progressbar')
-            let bardrag = document.getElementById('bardrag')
             let audio = document.getElementById("audio")
             var x = e.clientX,leftSpace = (this.phoneWidth - 200)/2
                 console.log(x,leftSpace)
             this.music.currentTime = (x - leftSpace)/200*this.music.duration
             audio.currentTime = this.music.currentTime
-            grogressbar.setAttribute('style', 'width:'+ x - leftSpace+'px')
-            bardrag.setAttribute('style', 'left:'+ x - leftSpace +'px')
         },
+        //TODO
         //滑动
-        touch: function(e) {
+        touchstart: function(e) {
             console.log('开始滑动',e)
+            e.preventDefault();
             let audio = document.getElementById("audio")
-            let grogressbar = document.getElementById('progressbar')
-            let bardrag = document.getElementById('bardrag')
             var x = e.changedTouches[0].clientX;
             let leftSpace = (this.phoneWidth - this.bardata.dragWidth)/2
             let moveX = x - leftSpace;
             this.bardata.distance = moveX;
             console.log(x - leftSpace)
-            audio.removeEventListener("timeupdate",function (){
-                grogressbar.setAttribute('style', 'width:'+ x - leftSpace+'px')
-                bardrag.setAttribute('style', 'left:'+ x - leftSpace +'px')
-            })
+            this.music.currentTime = (x - leftSpace)/200*this.music.duration
         },
         touchmove: function (e) {
             console.log('正在滑动')
             let audio = document.getElementById("audio")
-            let grogressbar = document.getElementById('progressbar')
-            let bardrag = document.getElementById('bardrag')
             var x = e.changedTouches[0].clientX;
             let leftSpace = (this.phoneWidth - this.bardata.dragWidth)/2
             let moveX = x - leftSpace;
             this.bardata.distance = moveX;
             console.log(x - leftSpace)
-            audio.removeEventListener("timeupdate",function (){
-                grogressbar.setAttribute('style', 'width:'+ x - leftSpace+'px')
-                bardrag.setAttribute('style', 'left:'+ x - leftSpace +'px')
-            })
+            this.music.currentTime = (x - leftSpace)/200*this.music.duration
         },
         touchover: function(e) {
             console.log('滑动结束')
             let audio = document.getElementById("audio")
-            let grogressbar = document.getElementById('progressbar')
-            let bardrag = document.getElementById('bardrag')
             var x = e.changedTouches[0].clientX;
             console.log(x)
             let leftSpace = (this.phoneWidth - this.bardata.dragWidth)/2
             this.music.currentTime = (x - leftSpace)/200*this.music.duration
             audio.currentTime = this.music.currentTime
-            grogressbar.setAttribute('style', 'width:'+ (x - leftSpace)+'px')
-            bardrag.setAttribute('style', 'left:'+ (x - leftSpace) +'px')
         },
         //歌词时间转换
         formatLyricTime: function(str) {
