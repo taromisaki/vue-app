@@ -2,10 +2,9 @@
     <div id="musicList">
         <div class="toolList">
             <ul>
-                <li @click="getData()"><img src="../assets/musiclist/music.png"><a>本地音乐</a></li>
-                <li><img src="../assets/musiclist/download.png"><a>下载管理</a></li>
-                <li><img src="../assets/musiclist/dj.png"><a>我的电台</a></li>
-                <li><img src="../assets/musiclist/carry.png"><a>我的收藏</a></li>
+                <li @click="getData()"><a>本地音乐</a></li>
+                <li><a>我的电台</a></li>
+                <li><a>我的收藏</a></li>
             </ul>
         </div>
         <div class="list-built">
@@ -20,7 +19,7 @@
                     <img v-bind:src="item.coverImgUrl" alt="">
                     <div class="menu-title">
                         <a alt="">{{item.name}}</a>
-                        <span>{{item.trackCount}}首 by  {{item.creator.nickname}}</span>
+                        <span>{{item.trackCount}}首&nbspby&nbsp{{item.creator.nickname}}</span>
                     </div>
                     <span class="clf"></span>
                 </li>
@@ -97,7 +96,6 @@ export default {
         
         .toolList {
             width: 100%;
-            height: 176px;
             ul {
                 list-style: none;
                 li {

@@ -1,6 +1,6 @@
 import axios from 'axios'
 export default async(url='', data={}, type='POST', isUrl = 0) => {
-    const basicUrl = '192.168.1.6:3003';
+    const basicUrl = 'http://localhost:3003';
     
     // const basicUrl = 'https://m.gzbfdc.com/servlet';
     type = type.toUpperCase();

@@ -1,11 +1,11 @@
 <template>
-  <div id="detail-play" class="maxheight">
+  <div id="detail-play">
         <img v-bind:src="music.pic" alt="" class="bg-img">
       <!-- 全屏播放界面 -->
       <!-- <transition name="fade"> -->
         <!-- <music-body v-if="fullshow"></music-body> -->
         <div style="height:calc(100% - 60px);" class="playingbody maxheight-body">
-            <div class="top" @click="allscren()">返回</div>
+            <div class="top" @touchend.stop="allscren()">返回</div>
             <!-- 中间体，播放界面或歌词界面 -->
             <div class="body" style="height:calc(100% - 150px);">
                 <img v-bind:src="music.pic" alt="" class="Rotation">
@@ -22,7 +22,7 @@
                 <!-- 添加到我喜欢 -->
                 <i class="iconfont icon-icon-7"></i>
                 <!-- 歌曲评论列表 -->
-                <i class="iconfont icon-icon-24"></i>
+                <i class="iconfont icon-icon-24" @touchend.stop="comment()"></i>
             </div>
         </div>
       <!-- </transition> -->
@@ -34,6 +34,7 @@
           </ul>
         </div>
       </transition>
+      <comment v-if="commentshow"></comment>
      
         <!-- 进度条 -->
         <div class="bor">
@@ -58,10 +59,7 @@
 </template>
 <style lang="less" scoped>
 //播放栏是否全屏
-.maxheight {
-    transition:  all 0.5s;
-    height: 100%;
-}
+
 .minheight {
     transition:  all 0.5s;
     height: 60px;
@@ -90,7 +88,11 @@
 #detail-play {
     display: none;
     position: fixed;
+    // height: 60px;
+    height: 100%;
     width: 100%;
+    display: none;
+    // background: red;
     background: rgba(66, 207, 177, 1);
     bottom: 0;
     .bg-img {
@@ -214,9 +216,12 @@
             font-size: 12px;
             line-height: 30px;
             height:30px;
-            width: calc(100% - 5px);
+            max-width: 80%;
             margin-left: 5px;
             margin-top: 5px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
     }
     .tool-list {
@@ -333,6 +338,7 @@
 
 </style>
 <script>
+import comment from '@/components/common/comment'
 import {getmusiclistdetail} from '@/api/getData'
 import {musicurl} from '@/api/getData'
 import {musicdetail} from '@/api/getData'
@@ -359,6 +365,8 @@ export default {
           playorpause: true,
           //播放列表是否展开
           listshow: false,
+          //评论列表
+          commentshow: false,
           //存储正在播放的音乐列表的各音乐id
           musiclistsId: [],
           //存储音乐列表具体信息
@@ -384,7 +392,8 @@ export default {
   },
   components: {
       'music-body': Child,
-      'lrc-temp': this.lrctemp
+      'lrc-temp': this.lrctemp,
+      'comment': comment
   },
   methods: {
       //暂停
@@ -411,9 +420,8 @@ export default {
             let pram = {'id':id}
             let par = await getmusiclistdetail(pram)
             let data = par.data
-            console.log(data)
             _self.musiclistDetail = data.playlist
-            _self.musiclistsId = data.privileges
+            _self.musiclistsId = data.id
             let itemsId = _self.musiclistsId
       },
         //获取具体音乐信息并播放
@@ -421,33 +429,29 @@ export default {
             let _self = this
             let audio = document.getElementById("audio")
             audio.src = ''
-            let dom = event.currentTarget
-            let musicname = dom.innerText
             let id =musicid
             // let name = dom.innerHTML
-            console.log(musicname,id)
             let pram = {'id':id}
             let par = await musicurl(pram)
-            console.log(par)
             let url = par.data.data[0].url
-            console.log(url)
             let parm = {'ids':id}
             let getmusic = await musicdetail(parm)
-            console.log(getmusic)
+            let musicname = getmusic.data.songs[0].name
             _self.music.name = getmusic.data.songs[0].name
             _self.music.pic = getmusic.data.songs[0].al.picUrl
 			let musicinfo = getmusic.data.songs[0]
-            //_self.$store.commit('changemusic', {'id':id,'url':url,'name':musicname,'musicinfo':musicinfo})
+            _self.$store.commit('changemusic', {'id':id,'url':url,'name':musicname,'musicinfo':musicinfo})
             let grogressbar = document.getElementById('progressbar')
             let bardrag = document.getElementById('bardrag')
             audio.src = url
             let lyrict = await lyric(pram)
-            let lyrics = lyrict.data.lrc.lyric
-            if (lyrics) {
+            let lyrics;
+            if (lyrict.data.lrc) {
+                lyrics = lyrict.data.lrc.lyric
                 this.formatLyric(lyrics)
-            }
-            else {
-
+            }else {
+                console.log('未找到相关歌词')
+                //this.playing_time_arr = '未找到相关歌词'
             }
             //歌词p标签数组
             let lrcps = $('.lrcps').toArray()
@@ -460,7 +464,6 @@ export default {
             //let timeArr = this.playing_time_arr
             //深拷贝
             let timeArr = Object.create(this.playing_time_arr)
-            console.log(wrap,lrcps)
             audio.addEventListener("canplaythrough", function(){
                 console.log('音乐准备完毕')
                 _self.isdefault = false
@@ -599,6 +602,9 @@ export default {
                 template += '<p class="lrcps" style="font-size: 8px; line-height: 20px; width: 200px; margin: 0 auto; color: #666" time-data="'+crr[p].timepoint+'">'+crr[p].lrcstr+'</p>'
             }
             irccon.innerHTML = template
+        },
+        comment: function () {
+            this.commentshow = !this.commentshow
         }
     },
   watch: {

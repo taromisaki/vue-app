@@ -20,4 +20,6 @@ export const musicurl = data => axio('/music/url', data,'GET')
 export const musicdetail = data => axio('/song/detail', data,'GET')
 //获取音乐歌词
 export const lyric = data => axio('/lyric', data,'GET')
+//获取歌曲评论
+export const songcomment = data => axio('/comment/music', data,'GET')
 

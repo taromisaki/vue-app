@@ -11,6 +11,9 @@ export default {
 </script>
 
 <style>
+body, h1, h2, h3, h4, h5, h6, hr, p, blockquote, dl, dt, dd, ul, ol, li, pre, form, fieldset, legend, button, input, textarea, th, td { 
+  margin:0; padding:0; 
+} 
 body:before {
   content: ' ';
   position: fixed;
@@ -21,6 +24,7 @@ body:before {
   left: 0;
   background: url("../src/assets/musiclist/listbg.png") no-repeat;
   background-size: 100% auto;
+  background: rgba(0, 0, 0, 0.9);
 }
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
@@ -31,5 +35,9 @@ body:before {
   width: 100%;
   height: 100%;
   /* margin-top: 60px; */
+}
+p,h1,h2,h3,h4,h5,h6 {
+    font-size:100% !important;   
+    font-weight:normal !important;
 }
 </style>

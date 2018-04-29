@@ -1,6 +1,6 @@
 <template>
     <div id="leftpanel">
-        <div class="mask">
+        <div class="mask" @touchstart.stop="ll()" @touchmove.stop="ls()" @touchend.stop="lefthide()">
             <div class="userInfo">
                 <img class="userHead" v-bind:src="userinfo.profile.avatarUrl">
                 <div class="userDetil">
@@ -32,7 +32,7 @@
                 </ul>
             </div>
         </div> 
-        <div class="rightmask" @click="change"></div> 
+        <div class="rightmask" @touchstart="change"></div> 
     </div>
 </template>
 <script>
@@ -61,7 +61,20 @@ export default {
             let refreshreq = await loginrefresh(par)
             this.userinfo = refreshreq.data
             console.log(this.userinfo)
-        } 
+        } ,
+        lefthide: function (e){
+            console.log(e)
+            // e.preventdefault()
+            // var x = e.changedTouches[0].clientX;
+            // if(x/$('.mask').width() > 0.3) {
+            //     this.$parent.componentsChange.leftpanelshow = false;
+            //     // this.$emit('taggle',false);
+            //     let body = document.getElementsByTagName('body')[0]
+            //     body.style.overflow = 'scroll'
+            // }
+        },
+        ll:function () {},
+        ls:function () {}
     },
     created: function () {
         // let user = this.$store.state.userinfo  localStorage.getItem('userid') ||
@@ -72,7 +85,20 @@ export default {
         let id = localStorage.getItem('userid')
         //alert(id)
         this.getUserinfo(id)
-    }
+    },
+    // watch: {
+    //     user_id: {
+    //         handler: function(val){
+    //             //alert(val)
+    //             this.getUserinfo(val)
+    //         }
+    //     }
+    // },
+    // computed: {
+    //     user_id () {
+    //         return localStorage.getItem('userid')
+    //     }
+    // }
 }
 </script>
 <style lang="less" scoped>
