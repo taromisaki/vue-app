@@ -1,39 +1,39 @@
 <template>
     <div id="musiclistDetail">
-        <div class="listheader">
-            <span class="back" @click="goBacklist()">歌单</span>
-            <div class="list-set"></div>
-            <div class="search-in-list"></div>
-            <div class="clf"></div>
+        <div class="listheader clearfix">
+            <span class="back iconfont icon-fanhui" @click="goBacklist()"></span>
+            <div class="list-set iconfont icon-weibiaoti12"></div>
         </div>
         <div class="middle">
             <img v-bind:src="musiclistDetail.coverImgUrl" alt="" class="cover">
             <div class="rightmsg">
                 <p class="title">{{musiclistDetail.name}}</p>
-                <div class="list-master">
-                    <img src="../assets/head.png" alt="" class="master">
-                    <span class="master-name">misaki-taro</span>
-                    <div class="clf"></div>
+                <div class="list-master clearfix">
+                    <img v-bind:src="musiclistDetail.creator.avatarUrl" alt="" class="master">
+                    <span class="master-name">{{musiclistDetail.creator.nickname}}</span>
                 </div>
             </div>
             <div class="clf"></div>
         </div>
         <div class="musics-con">
             <ol class="musics-list" type="1">
-                <li v-for="item in musiclistDetail.tracks" v-bind:music-id="item.id" @click="play">
+                <li v-for="item in musiclistDetail.tracks" class="clearfix">
                     <div class="music-title">
-                        <p alt="">{{item.name}}</p>
+                        <p v-bind:music-id="item.id" @click="play">{{item.name}}</p>
                         <!-- <span class="singer">{{item.album.artists[0].name}}</span> -->
                     </div>
                     <div class="music-tool"></div>
-                    <span class="clf"></span>
                 </li>
             </ol>
         </div>
+        <keep-alive>
+        <comfooter v-show="!this.$parent.playing"></comfooter>
+        </keep-alive>
     </div>
 </template>
 <script>
 // import comfooter from '@/components/common/footer'
+import comfooter from '@/components/common/footer'
 import {getmusiclistdetail} from '@/api/getData'
 import {musicurl} from '@/api/getData'
 import {musicdetail} from '@/api/getData'
@@ -47,7 +47,7 @@ export default {
         }
     },
     components: {
-        // comfooter
+        comfooter
     },
     methods: {
         async getData(id){
@@ -56,21 +56,26 @@ export default {
             let par = await getmusiclistdetail(pram)
             let data = par.data
             console.log(">>>>>",data)
-            _self.musiclistDetail = data.playlist
+            _self.musiclistDetail = data.result
             _self.musiclistsId = data.privileges
             let itemsId = _self.musiclistsId
         },
         async play() {
             let dom = event.currentTarget
-            let id = dom.getAttribute("music-id")
-            this.$store.commit('changemusic', {'id':id})
+            let id = dom.getAttribute("music-id") 
+            if(this.$store.state.musicplaying.id == id) {
+                // this.$parent.playing = true
+                this.$store.commit('_playing',true)
+            }else {
+                this.$store.commit('changemusic', {'id':id})
+            }
+            //this.$router.push('/main/detailplay')
         },
         goBacklist () {
-            this.$parent.componentsChange.musiclistshow = !this.$parent.componentsChange.musiclistshow
-            this.$parent.componentsChange.musiclistdetailshow = !this.$parent.componentsChange.musiclistdetailshow
+            this.$router.go(-1)
         }
     },
-    mounted: function (){
+    created: function (){
         console.log(this)
         let id = this.$store.state.musiclistId
         this.getData(id)
@@ -88,52 +93,42 @@ export default {
 <style lang="less" scoped>
     #musiclistDetail {
         overflow: scroll;
-        margin-top: 60px;
         width: 100%;
         height: 100%;
         .listheader {
             width: 100%;
             height: 60px;
             padding: 0;
+            position: fixed;
+            top: 0;
+            left: 0;
             // background: rgba(0, 37, 177, 0.77);
             color: #fff;
+                background: rgba(1,1,1,.5);
             .back {
                 display: inline-block;
-                width: 100px;
+                width: 60px;
                 height: 60px;
                 float: left;
                 line-height: 60px;
-                background: url('../assets/musiclistdetail/turnback.png') no-repeat;
-                background-size: auto 30%;
-                background-position: 15px;
-                padding-left: 45px;
+                padding-left: 15px;
                 box-sizing: border-box;
-            }
-            .search-in-list {
-                width: 60px;
-                height: 60px;
-                float: right;
-                line-height: 60px;
-                background: url('../assets/musiclistdetail/search.png') no-repeat;
-                background-size: auto 30%;
-                background-position: 50%;
+                text-align: center;
             }
             .list-set {
                 width: 60px;
                 height: 60px;
                 float: right;
                 line-height: 60px;
-                background: url('../assets/musiclistdetail/more.png') no-repeat;
-                background-size: auto 30%;
-                background-position: 50%;
+                text-align: center;
             }
             .clf {
                 clear: both;
             }
         }
         .middle {
-            height: 180px;
             width: 100%;
+            margin-top: 60px;
             // background: rgba(0, 37, 177, 0.77);
             color: #fff;
             .cover {
@@ -171,78 +166,14 @@ export default {
             .clf {
                 clear: both;
             }
-            .tool {
-                width: 100%;
-                display: flex;
-                margin-left: 10px auto;
-                div {
-                    flex: 1;
-                    text-align: center;
-                    padding-bottom: 0;
-                    font-size: 12px;
-                    padding-top: 35px;
-                    box-sizing: border-box;
-                    height: 50px;
-                }
-                .stay {
-                    
-                    background: url('../assets/musiclistdetail/hided.png') no-repeat;
-                    background-size: auto 50%;
-                    background-position: 50%;
-                }
-                .comment {
-                    background: url('../assets/musiclistdetail/comment.png') no-repeat;
-                    background-size: auto 50%;
-                    background-position: 50%;
-                }
-                .share {
-                    background: url('../assets/musiclistdetail/share.png') no-repeat;
-                    background-size: auto 50%;
-                    background-position: 50%;
-                }
-                .download {
-                    background: url('../assets/musiclistdetail/download.png') no-repeat;
-                    background-size: auto 50%;
-                    background-position: 50%;
-                }
-            }
         }
         .musics-con {
             width: 100%;
-            .list-tool {
-                width: 100%;
-                height: 40px;
-                color:#fff;
-                font-size: 12px;
-                // background: rgba(28, 62, 126, 0.68);
-                .playall {
-                    width: 78%;
-                    float: left;
-                    height: 40px;
-                    line-height: 40px;
-                    box-sizing: border-box;
-                    background: url('../assets/musiclistdetail/play.png') no-repeat;
-                    background-size: auto 50%;
-                    background-position: 15px;
-                    padding-left: 40px;
-                }
-                .select {
-                    width: 22%;
-                    float: left;
-                    height: 40px;
-                    line-height: 40px;
-                    background: url('../assets/musiclistdetail/moreset.png') no-repeat;
-                    background-size: auto 50%;
-                    background-position: 10px;
-                    padding-left: 34px;
-                    box-sizing: border-box;
-                }
-            }
             .musics-list {
                 list-style: none;
                 margin: 0;
                 padding: 0;
-                padding-bottom: 20px;
+                padding-bottom: 60px;
                 // background: rgba(28, 62, 126, 0.68);
                 li {
                     color: #fff;
@@ -264,8 +195,8 @@ export default {
                             margin:0;
                             font-size: 14px;
                             width: 100%;
-                            height: 21px;
-                            line-height: 21px;
+                            height: 45px;
+                            line-height: 45px;
                             text-overflow: ellipsis;
                             white-space: nowrap;
                             overflow: hidden;

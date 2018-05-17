@@ -90,7 +90,8 @@ export default new Vuex.Store({
         //用户id
         userId: '',
         //控制音乐播放进度条开始工作
-        borgo: false
+        borgo: false,
+        playing: false
     },
     mutations: {
         getmusiclistid (state,id) {
@@ -108,6 +109,9 @@ export default new Vuex.Store({
         },
         setborgo (state,isgo) {
             state.borgo = isgo
+        },
+        _playing(state,bol) {
+            state.playing = bol
         }
     }
 });

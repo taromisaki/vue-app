@@ -1,8 +1,8 @@
 <template>
-    <div id="leftpanel">
+    <div id="leftpanel" ref="leftpanel">
         <div class="mask" @touchstart.stop="ll()" @touchmove.stop="ls()" @touchend.stop="lefthide()">
             <div class="userInfo">
-                <img class="userHead" v-bind:src="userinfo.profile.avatarUrl">
+                <img class="userHead" v-bind:src="userinfo.profile.avatarUrl" @click.stop="myinfo()">
                 <div class="userDetil">
                     <span class="userName" @click="cons">{{userinfo.profile.nickname}}</span>
                     <b class="userlevel">lv{{userinfo.level}}</b>
@@ -12,27 +12,26 @@
             </div>
             <div class="aboutme">
                 <ul class="aboutme-ul">
-                    <li class="my-msg"><img src="../assets/leftpanel/message.png"><a>我的消息</a></li>
-                    <li class="my-friends"><img src="../assets/leftpanel/friends.png"><a>我的好友</a></li>
+                    <li class="my-msg"><img src="/src/assets/leftpanel/message.png"><a>我的消息</a></li>
+                    <li class="my-friends"><img src="/src/assets/leftpanel/friends.png"><a>我的好友</a></li>
                 </ul>      
             </div>
             <div class="tool">
                 <ul class="tool-ul">
-                    <li class="settime"><img src="../assets/leftpanel/settime.png"><a>定时停止播放</a></li>
-                    <li class="scanning"><img src="../assets/leftpanel/scanning.png"><a>扫一扫</a></li>
-                    <li class="clock"><img src="../assets/leftpanel/clock.png"><a>音乐闹钟</a></li>
-                    <li class="pan"><img src="../assets/leftpanel/pan.png"><a>音乐云盘</a></li>
+                    <li class="settime"><img src="/src/assets/leftpanel/settime.png"><a>定时停止播放</a></li>
+                    <li class="scanning"><img src="/src/assets/leftpanel/scanning.png"><a>扫一扫</a></li>
+                    <li class="clock"><img src="/src/assets/leftpanel/clock.png"><a>音乐闹钟</a></li>
+                    <li class="pan"><img src="/src/assets/leftpanel/pan.png"><a>音乐云盘</a></li>
                 </ul>
             </div>
             <div class="bottom-tool">
                 <ul class="bottom-tool-ul">
-                    <li><img src="../assets/leftpanel/night.png"><a>夜间模式</a></li>
-                    <li><img src="../assets/leftpanel/set.png"><a>设置</a></li>
-                    <li><img src="../assets/leftpanel/out.png"><a>退出</a></li>
+                    <li><img src="/src/assets/leftpanel/night.png"><a>夜间模式</a></li>
+                    <li><img src="/src/assets/leftpanel/out.png"><a>退出</a></li>
                 </ul>
             </div>
         </div> 
-        <div class="rightmask" @touchstart="change"></div> 
+        <div class="rightmask" @touchstart.stop="change"></div> 
     </div>
 </template>
 <script>
@@ -74,7 +73,20 @@ export default {
             // }
         },
         ll:function () {},
-        ls:function () {}
+        ls:function () {},
+        myinfo: function (){
+            let _self = this
+            _self.$parent.componentsChange.leftpanelshow = false;
+            let id = '515731832'
+            setTimeout(function(){
+                _self.$router.push({
+                    'path': '/main/userinfo', 
+                    'query': {
+                        'id': id
+                    }
+                })
+            },300)
+        }
     },
     created: function () {
         // let user = this.$store.state.userinfo  localStorage.getItem('userid') ||
@@ -107,8 +119,6 @@ export default {
         height: 100%;
         position: fixed;
         top: 0;
-        left: 0;
-        right: 0;
         bottom: 0;
         min-height: 812px;
         color: #fff;
@@ -118,7 +128,7 @@ export default {
             height: 100%;
             width: 85%;
             min-height: 812px;
-            background: url('../assets/leftpanel/yourname.png') no-repeat;
+            background: url('/src/assets/leftpanel/yourname.png') no-repeat;
             background-size: auto 100%;
             background-position-x: 30%;
             float: left;
@@ -191,7 +201,7 @@ export default {
             .aboutme-ul {
                 background: rgba(255, 255, 255, 0.1);
                 .my-msg {
-                    // background: url('../assets/leftpanel/message.png') no-repeat;
+                    // background: url('/src/assets/leftpanel/message.png') no-repeat;
                     // background-position: 0% 8px;
                     // background-size: auto 90%;
                     img {
@@ -199,7 +209,7 @@ export default {
                     }
                 }
                 .my-friends {
-                    // background: url('../assets/leftpanel/friends.png') no-repeat;
+                    // background: url('/src/assets/leftpanel/friends.png') no-repeat;
                     // background-position: 0% 8px;
                     // background-size: auto 90%;
                 }
@@ -211,22 +221,22 @@ export default {
             .tool-ul {
                 background: rgba(255, 255, 255, 0.1);
                 .settime {
-                    // background: url('../assets/leftpanel/settime.png') no-repeat;
+                    // background: url('/src/assets/leftpanel/settime.png') no-repeat;
                     // background-position: 0% 8px;
                     // background-size: auto 90%;
                 }
                 .scanning {
-                    // background: url('../assets/leftpanel/scanning.png') no-repeat;
+                    // background: url('/src/assets/leftpanel/scanning.png') no-repeat;
                     // background-position: 0% 8px;
                     // background-size: auto 90%;
                 }
                 .clock {
-                    // background: url('../assets/leftpanel/clock.png') no-repeat;
+                    // background: url('/src/assets/leftpanel/clock.png') no-repeat;
                     // background-position: 0% 8px;
                     // background-size: auto 90%;
                 }
                 .pan {
-                    // background: url('../assets/leftpanel/friends.png') no-repeat;
+                    // background: url('/src/assets/leftpanel/friends.png') no-repeat;
                     // background-position: 0% 8px;
                     // background-size: auto 90%;
                 }

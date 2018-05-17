@@ -1,17 +1,14 @@
 <template>
     <div id="footer" @click="detailplay">
         <div class="tool-list">
-            <div class="left" v-if="music">
+            <div class="left" v-if="isdefault">
                 <img src="../../assets/footer/default.png" alt="">
                 <div class="music-name">未在播放。。。</div>
             </div>
             <div class="left" v-else>
-                <img alt="">
-                <div class="music-name">666666</div>
+                <img alt="" v-bind:src="music.al.picUrl">
+                <div class="music-name">{{music.name}}</div>
             </div>
-            <div class="playtool" v-if="playorpause"></div>
-            <div class="pausetool" v-else></div>
-            <div class="menu"></div>
         </div>
     </div>
 </template>
@@ -50,70 +47,50 @@
             color: #fff;
             line-height: 60px;
         }
-        .audio {
-            width: 0;
-            height: 0;
-            float: left;
-        }
-        .playtool {
-            float: left;
-            width: 24px;
-            height: 24px;
-            background: url("../../assets/footer/play.png") no-repeat;
-            background-size: 100% auto;
-            margin: 18px 0;
-        }
-        .pausetool {
-            float: left;
-            width: 24px;
-            height: 24px;
-            background: url("../../assets/footer/pause.png") no-repeat;
-            background-size: 100% auto;
-            margin: 18px 0;
-        }
-        .menu {
-            float: right;
-            width: 24px;
-            height: 24px;
-            background: url("../../assets/footer/playinglist.png") no-repeat;
-            background-size: 100% auto;
-            margin: 18px 12px;
-        }
     }
 }
 </style>
 <script>
+import {musicdetail} from '@/api/getData'
 export default {
    data () {
        return {
            isdefault: true,
-           music: {
-               id:'',
-               name:'',
-               musicinfo:{},
-               url:''
-           },
+           music: {},
            playorpause: true
        }
    },
    methods: {
        detailplay: function () {
-            $('#detail-play').show()
-            $('#footer').hide()
+          // this.$router.push('/main/detailplay')
+           //this.$parent.playing = true;
+                this.$store.commit('_playing',true)
+       },
+       async detail(val) {
+           let id = val
+           let parm = {'ids':id}
+           let data = await musicdetail(parm)
+           console.log('+++++++++++++++++++++++++++++++',data)
+           this.music = data.data.songs[0]
+           this.isdefault = false
        }
    },
     watch: {
         store_music: {
             handler: function(val){
-                alert(val)
-                this.music = val
+                this.detail(val)
             }
         }
     },
     computed: {
       //获取store中的音乐信息
       store_music() {
-          return this.$store.state.musicplaying
+          return this.$store.state.musicplaying.id
+      }
+  },
+  created: function() {
+      if(this.$store.state.musicplaying.id) {
+        this.detail(this.$store.state.musicplaying.id)
       }
   }
 }

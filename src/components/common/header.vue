@@ -12,21 +12,21 @@ export default {
         changeOpen: function () {
             // console.log(this.$parent.show);
             
-            this.$parent.componentsChange.leftpanelshow = true
+            this.$parent.$parent.componentsChange.leftpanelshow = true
             let body = document.getElementsByTagName('body')[0]
             body.style.overflow = 'hidden'
             console.log('左侧出现')
             // this.$emit('taggle',false);
         },
         searchShow: function (){
-            this.$parent.componentsChange.searchWrapshow = true
+            this.$router.push('/main/search')
         }
     }
 }
 </script>
 <style lang="less" scoped>
     #header {
-        position: fixed;
+        position: absolute;
         top: 0;
         bottom:0;
         left: 0;
@@ -34,6 +34,7 @@ export default {
         width: 100%;
         height: 60px;
         background: rgba(74, 31, 11, 0.6);
+        z-index: 1000;
         .menu {
             width: 60px;
             height: 60px;

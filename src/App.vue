@@ -22,9 +22,9 @@ body:before {
   right: 0;
   bottom: 0;
   left: 0;
-  background: url("../src/assets/musiclist/listbg.png") no-repeat;
+  background: url("/src/assets/musiclist/listbg.png") no-repeat;
   background-size: 100% auto;
-  background: rgba(0, 0, 0, 0.9);
+  /* background: rgba(0, 0, 0, 0.9); */
 }
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
@@ -39,5 +39,20 @@ body:before {
 p,h1,h2,h3,h4,h5,h6 {
     font-size:100% !important;   
     font-weight:normal !important;
+}
+
+.clearfix::before {
+    content: '\0020';
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
+.clearfix::after {
+    content: '\0020';
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
 }
 </style>

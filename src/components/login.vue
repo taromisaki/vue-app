@@ -47,7 +47,7 @@ export default {
                     let id = req.data.account.id
                     //_self.$store.commit('setuserId', id)
                     localStorage.setItem('userid', id)
-                    _self.$router.push({path: '/main'});
+                    _self.$router.push({path: '/main/musiclist'});
                     // window.location.href="/#/main"
                 }
             }catch(err){

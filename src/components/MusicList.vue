@@ -1,10 +1,15 @@
 <template>
     <div id="musicList">
+    <comheader></comheader>
+    <keep-alive>
+      <comfooter v-show="!this.$parent.playing"></comfooter>
+    </keep-alive>
         <div class="toolList">
             <ul>
-                <li @click="getData()"><a>本地音乐</a></li>
-                <li><a>我的电台</a></li>
-                <li><a>我的收藏</a></li>
+                <li><a>本地音乐</a></li>
+                <li><a @click.stop="mydj()">推荐电台</a></li>
+                <!-- TODO -->
+                <!-- <li><a @click.stop="getsubcount()">我的收藏</a></li> -->
             </ul>
         </div>
         <div class="list-built">
@@ -28,6 +33,9 @@
     </div>
 </template>
 <script>
+import comheader from '@/components/common/header'
+import comfooter from '@/components/common/footer'
+import LeftPanel from '@/components/LeftPanel'
 import {getmusiclist} from '@/api/getData'
 export default {
     name: 'Musiclist',
@@ -37,6 +45,11 @@ export default {
             musiclistDetail:{}
         }
     },
+    components: {
+        comheader,
+        comfooter,
+        LeftPanel
+    },
     methods: {
         getMusiclistDetail(event) {
             console.log(this)
@@ -45,9 +58,8 @@ export default {
             let dom = event.currentTarget
             let id = dom.getAttribute("list-id")
             this.$store.commit('getmusiclistid',id)
-            this.$parent.componentsChange.musiclistshow = false
-            this.$parent.componentsChange.musiclistdetailshow = true
             this.$store.state.musiclistId = id
+            this.$router.push('/main/listdetail')
         },
         // 封装请求方法
         async getData(){
@@ -76,6 +88,12 @@ export default {
                 document.getElementById('waiting').style.display = 'none'
                 return _self.musiclists 
             }  
+        },
+        mydj: function (){
+            this.$router.push('/main/mydj')
+        },
+        getsubcount : function (){
+            this.$router.push('/main/subcount')
         }
     },
     created: function (){
@@ -91,9 +109,8 @@ export default {
     }
     #musicList {
         width: 100%;
-        margin: 60px 0;
         padding: 0;
-        
+        padding-top: 60px;
         .toolList {
             width: 100%;
             ul {
@@ -162,11 +179,14 @@ export default {
                     list-style: none;
                     display: flex;
                     overflow: hidden;
+                    padding-left: 15px;
+                    box-sizing: border-box;
                     img {
                         width: 50px;
-                        // height: 50px;
+                        height: 50px;
                         float: left;
                         flex:0;
+                        border-radius: 5px;
                     }
                     .menu-title {
                         float: left;
@@ -184,13 +204,14 @@ export default {
                             color: #fff;
                             text-decoration: none;
                             margin-top: 5px;
+                            font-size: 12px;
                         }
                         span {
                             color: #fff;
                             display: block;
                             height: 25px;
                             line-height: 25px;
-                            font-size: 14px;
+                            font-size: 10px;
                         }
                     }
                     .clf {

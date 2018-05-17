@@ -1,19 +1,14 @@
 <template>
   <div class="hello">
-    <comheader ></comheader>
-      <transition name="bounce">
-        <LeftPanel v-show="componentsChange.leftpanelshow"></LeftPanel>
-      </transition>
-      <search v-if="componentsChange.searchWrapshow"></search>
-      <div v-if="fullscren" keep-alive>
-        <transition name="fade">
-        <musicList v-if="componentsChange.musiclistshow" keep-alive></musicList>
-        <musiclistdetail v-if="componentsChange.musiclistdetailshow" keep-alive></musiclistdetail>
-      </transition>
-      </div>
-      <detailplay keep-alive></detailplay>
-      <comfooter></comfooter>
-      <audio autoplay class="audio" id="audio" ref='player'></audio>
+   <transition :name="transitionName"> 
+  <router-view class="Router"></router-view>
+  </transition>
+  <transition name="bounce"> 
+  <LeftPanel v-show="componentsChange.leftpanelshow">
+  </LeftPanel>
+  </transition>
+  <detailplay v-show="playing"></detailplay>
+      <audio id="audio" ref="audio"></audio>
       <!-- <div class="mask" v-if="show"></div> -->
   </div>
     
@@ -24,7 +19,6 @@ import LeftPanel from '@/components/LeftPanel'
 import search from '@/components/common/search'
 import musicList from '@/components/MusicList'
 import musiclistdetail from '@/components/musiclistdetail'
-import comheader from '@/components/common/header'
 import comfooter from '@/components/common/footer'
 import detailplay from '@/components/common/detailPlay'
 export default {
@@ -36,18 +30,14 @@ export default {
       //定义变量保存管理各组件的显示与隐藏
       componentsChange: {
         //主页左侧的栏
-        leftpanelshow: false,
-        //主页歌单隐藏
-        musiclistshow: true,
-        //歌单详情
-        musiclistdetailshow: false,
-        //搜索组件
-        searchWrapshow: false
+        leftpanelshow: false
       },
       //正在播放的音乐
       musicplaying:'',
       //全屏播放时其他组件的状态（渲染还是不渲染）
-      fullscren: true
+      fullscren: true,
+      playing: '',
+      transitionName: ''
     }
   },
   components: {
@@ -55,11 +45,32 @@ export default {
     search,
     musicList,
     musiclistdetail,
-    comheader,
     comfooter,
     detailplay
   },
   methods: {
+  },
+  computed: {
+      //获取store中的音乐信息
+      _playing() {
+          return this.$store.state.playing
+      }
+  },
+  watch: {
+      _playing: {
+          handler: function(val){
+            let _self = this
+            _self.playing = val
+        }
+      },
+      '$route' (to, from) {  
+        if(to.path == '/main/musiclist'){  
+          console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
+          this.transitionName = 'slide-right';  
+        }else{  
+          this.transitionName = 'slide-left';  
+        }  
+      }  
   }
 }
 </script>
@@ -69,9 +80,32 @@ export default {
 .clf {
   clear: both;
 }
+.Router {
+     position: absolute;
+     width: 100%;
+     transition: all .5s ease;
+}
+
+.slide-left-enter,
+ .slide-right-leave-active {
+     opacity: 0;
+    -webkit-transform: translate(100%, 0);
+    transform: translate(100%, 0);
+}
+
+.slide-left-leave-active,
+.slide-right-enter {
+     opacity: 0;
+    -webkit-transform: translate(-100%, 0);
+    transform: translate(-100% 0);
+}
 </style>
 
 <style scoped>
+.hello {
+  height: 100%;
+  width: 100%;
+}
 .mask {
   height: 100%;
   width: 100%;

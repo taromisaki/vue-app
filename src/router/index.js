@@ -5,16 +5,18 @@ import header from '@/components/common/header'
 import footer from '@/components/common/footer'
 import group from '@/components/group'
 import LeftPanel from '@/components/LeftPanel'
-import MusicList from '@/components/MusicList'
+import musiclist from '@/components/MusicList'
 import Online from '@/components/Online'
 import index from '@/components/index'
 import play from '@/components/play'
 import login from '@/components/login'
 import musiclistDetail from '@/components/musiclistDetail'
-Vue.prototype.goBack = function () {
-  this.isBack = true
-  window.history.go(-1)
-}
+import search from '@/components/common/search'
+import comment from '@/components/common/comment'
+import detailplay from '@/components/common/detailPlay'
+import mydj from '@/components/common/mydj'
+import subcount from '@/components/common/subcount'
+import userinfo from '@/components/common/userinfo'
 Vue.use(Router)
 
 
@@ -28,71 +30,52 @@ export default new Router({
     {
       path: '/main',
       name: 'index',
-      children : [
+      component: index,
+      children: [
         {
-          path: '/leftpanel',
-          componets: LeftPanel
-        },
-        {
-          path: '/online',
-          componets: Online
-        },
-        {
-          path: '/group',
-          componets: group
-        },
-        {
-          path: '/sss',
-          name: 'header',
-          component: header
-        },
-        {
-          path: '/musiclist',
+          path: '/main/musiclist',
           name: 'musiclist',
-          component: MusicList
+          component: musiclist
         },
         {
-          path: '/musiclistDetail',
-          name: 'musiclistDetail',
+          path: '/main/listdetail',
+          name: 'listdetail',
           component: musiclistDetail
         },
-      ],
-      component: index
-    },
-    {
-      path: '/index',
-      name: 'HelloWorld',
-      component: HelloWorld
-    },
-    {
-      path: '/sss',
-      name: 'header',
-      component: header
-    },
-    {
-      path: '/ddd',
-      name: 'footer',
-      component: footer
-    },
-    {
-      path: '/musiclistDetail',
-      name: 'musiclistDetail',
-      children : [
         {
-          path: '/footer',
-          name: 'footer',
-          component: footer
+          path: '/main/comment',
+          name: 'comment',
+          component: comment
+        },
+        {
+          path: '/main/search',
+          name: 'search',
+          component: search
+        },
+        {
+          path: '/main/mydj',
+          name: 'mydj',
+          component: mydj
+        },
+        {
+          path: '/main/subcount',
+          name: 'subcount',
+          component: subcount
+        },
+        {
+          path: '/main/userinfo',
+          name: 'userinfo',
+          component: userinfo
         }
-      ],
-      component: musiclistDetail
-    },
-    {
-      path: '/play',
-      name: 'play',
-      component: play
+      ]
+
     }
   ]
 })
+Vue.prototype.goBack = function () {
+  this.isBack = true
+  window.history.go(-1)
+}
 // router.beforeRouteUpdate ((to, from, next) => {
 //   // 如果isBack为true时，证明是用户点击了回退，执行slide-right动画
 //    let isBack = this.$router.isBack
